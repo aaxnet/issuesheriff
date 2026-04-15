@@ -1,6 +1,6 @@
 <div align="center">
 
-```
+```text
  ██╗███████╗███████╗██╗   ██╗███████╗███████╗██╗  ██╗███████╗██████╗ ██╗███████╗███████╗
  ██║██╔════╝██╔════╝██║   ██║██╔════╝██╔════╝██║  ██║██╔════╝██╔══██╗██║██╔════╝██╔════╝
  ██║███████╗███████╗██║   ██║█████╗  ███████╗███████║█████╗  ██████╔╝██║█████╗  █████╗  
@@ -11,47 +11,67 @@
 
 # IssueSheriff
 
-### AI-powered GitHub Issue Intelligence Engine
-
-Turn messy issue trackers into clean, structured, production-ready workflows.
+### AI-powered GitHub issue intelligence for maintainers who value speed, clarity, and polish.
 
 <br/>
 
-[![PyPI](https://img.shields.io/pypi/v/issuesheriff?color=black\&style=flat-square)](https://pypi.org/project/issuesheriff/)
+[![PyPI](https://img.shields.io/pypi/v/issuesheriff?style=flat-square\&color=black)](https://pypi.org/project/issuesheriff/)
 [![Python](https://img.shields.io/badge/python-3.10+-black?style=flat-square)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-black?style=flat-square)](LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/aaxnet/issuesheriff/tests.yml?style=flat-square\&color=black)](https://github.com/aaxnet/issuesheriff/actions)
-[![Downloads](https://img.shields.io/pypi/dm/issuesheriff?color=black\&style=flat-square)](https://pypi.org/project/issuesheriff/)
+[![Downloads](https://img.shields.io/pypi/dm/issuesheriff?style=flat-square\&color=black)](https://pypi.org/project/issuesheriff/)
 
 <br/>
 
 </div>
 
----
-
-## ⚡ Overview
-
-**IssueSheriff** is a high-performance AI system for GitHub issue triage.
-
-It automatically:
-
-* classifies issues (bug / feature / security / docs)
-* suggests labels
-* detects duplicates using semantic similarity
-* generates maintainer-quality replies
-* processes entire repositories via CLI or CI/CD
-
-No noise. No manual triage overload.
+> **IssueSheriff** turns noisy GitHub issue trackers into clean, structured workflows.
+> It classifies issues, suggests labels, detects duplicates, and drafts replies — from your terminal or inside GitHub Actions.
 
 ---
 
-## 🚀 Install
+## Why it exists
+
+Large repositories accumulate issues fast. Manual triage is repetitive, slow, and easy to get wrong.
+
+IssueSheriff helps you:
+
+* identify issue type quickly
+* suggest relevant labels
+* detect likely duplicates
+* generate concise maintainer replies
+* automate triage in CI/CD
+
+---
+
+## Highlights
+
+| Capability        | What it does                                                   |
+| ----------------- | -------------------------------------------------------------- |
+| 🔍 Analyze        | Classifies issues as bug, feature, question, docs, or security |
+| 🏷 Labels         | Suggests relevant labels and can apply them automatically      |
+| 🪞 Duplicates     | Finds similar issues using TF-IDF + cosine similarity          |
+| 💬 Replies        | Drafts human-sounding maintainer responses                     |
+| 📡 Scan           | Reads whole repositories with pagination support               |
+| ⚡ GitHub Action   | Auto-triage on new issues                                      |
+| 🦙 Offline mode   | Works with Ollama locally                                      |
+| 🔌 No-AI fallback | Still useful without an API key                                |
+
+---
+
+## Install
 
 ```bash
 pip install issuesheriff
 ```
 
-With full capabilities:
+With duplicate detection:
+
+```bash
+pip install "issuesheriff[similarity]"
+```
+
+Full dev setup:
 
 ```bash
 pip install "issuesheriff[similarity,ollama,dev]"
@@ -59,60 +79,58 @@ pip install "issuesheriff[similarity,ollama,dev]"
 
 ---
 
-## ⚡ Quick Start
+## Quick start
 
 ```bash
 cp .env.example .env
 ```
 
 ```env
-GITHUB_TOKEN=ghp_xxx
-OPENAI_API_KEY=sk-xxx
+GITHUB_TOKEN=ghp_your_token_here
+OPENAI_API_KEY=sk_your_key_here
 ```
 
 ```bash
-issuesheriff scan aaxnet/issuesheriff --limit 20
+issuesheriff analyze examples/sample_issue.json
+issuesheriff scan aaxnet/issuesheriff --limit 25
+issuesheriff labels aaxnet/issuesheriff 123 --apply
+issuesheriff reply aaxnet/issuesheriff 123 --copy
 ```
 
 ---
 
-## 🧠 Core Features
-
-| Feature       | Description                                         |
-| ------------- | --------------------------------------------------- |
-| 🔍 Analyze    | Classify issue type with AI/heuristics              |
-| 🏷 Labels     | Auto-suggest and apply labels                       |
-| 🪞 Duplicates | Semantic similarity detection (TF-IDF / embeddings) |
-| 💬 Replies    | Generate human-quality maintainer responses         |
-| 📡 Scan       | Bulk repo processing via GitHub API                 |
-| ⚙ CI/CD       | GitHub Actions integration                          |
-| 🦙 Offline    | Ollama local model support                          |
-| 🧩 Fallback   | Works without any AI API                            |
-
----
-
-## 📦 CLI Usage
+## CLI
 
 ```bash
-issuesheriff analyze issue.json
-issuesheriff scan owner/repo --limit 50
-issuesheriff labels owner/repo 123 --apply
-issuesheriff reply owner/repo 123 --copy
+issuesheriff analyze <file>          Analyze a local issue JSON file
+issuesheriff scan <owner/repo>       Scan a GitHub repository
+issuesheriff labels <owner/repo> <#> Suggest or apply labels
+issuesheriff reply <owner/repo> <#>  Generate a reply draft
+```
+
+Examples:
+
+```bash
+issuesheriff scan microsoft/vscode --limit 50 --state open
+issuesheriff scan torvalds/linux --limit 100 --no-duplicates
+issuesheriff analyze issue.json --json
+issuesheriff reply aaxnet/issuesheriff 42 --copy
 ```
 
 ---
 
-## 🔥 GitHub Action
+## GitHub Action
 
 ```yaml
 name: IssueSheriff Auto Triage
 
 on:
   issues:
-    types: [opened]
+    types: [opened, reopened]
 
 permissions:
   issues: write
+  contents: read
 
 jobs:
   triage:
@@ -120,47 +138,102 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install
+      - name: Install IssueSheriff
         run: pip install issuesheriff
 
-      - name: Run Triage
+      - name: Analyze issue
         run: |
           echo '{"title":"${{ github.event.issue.title }}","body":"${{ github.event.issue.body }}"}' > issue.json
-          issuesheriff analyze issue.json
+          issuesheriff analyze issue.json --json > result.json
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 ```
 
 ---
 
-## 🧬 Architecture
+## Data format
 
+### Input
+
+```json
+{
+  "title": "App crashes on startup",
+  "body": "The app exits immediately after launch.",
+  "comments": []
+}
 ```
-issuesheriff/
-├── ai.py            # LLM + fallback logic
-├── github_client.py # GitHub API layer
-├── similarity.py    # duplicate detection engine
-├── main.py          # CLI (Typer)
-├── config.py        # env config
-└── utils.py
+
+### Output
+
+```json
+{
+  "summary": "Application crashes immediately on launch and appears reproducible after the latest update.",
+  "type": "bug",
+  "labels": ["bug", "crash"],
+  "confidence": 0.94,
+  "similar_issues": [
+    { "id": 209831, "score": 0.81 },
+    { "id": 208104, "score": 0.57 }
+  ],
+  "reply": "Thanks for the report. This looks like a crash regression, and we will investigate it further."
+}
 ```
 
 ---
 
-## ⚙ Configuration
+## AI backends
 
-| Variable             | Description           |
-| -------------------- | --------------------- |
-| GITHUB_TOKEN         | GitHub API access     |
-| OPENAI_API_KEY       | AI backend            |
-| ISSUESHERIFF_MODEL   | Model selection       |
-| SIMILARITY_THRESHOLD | Duplicate sensitivity |
+### OpenAI
 
----
+Fast and accurate for production use.
 
-## 🧪 Development
+```env
+OPENAI_API_KEY=sk-...
+ISSUESHERIFF_MODEL=gpt-4o-mini
+```
+
+### Ollama
+
+Private local inference with no data leaving your machine.
 
 ```bash
+ollama run mistral
+```
+
+```env
+OLLAMA_MODEL=mistral
+OLLAMA_BASE_URL=http://localhost:11434
+```
+
+### No AI
+
+If no backend is configured, IssueSheriff still runs with heuristic classification and duplicate detection.
+
+```bash
+issuesheriff scan aaxnet/issuesheriff --no-reply
+```
+
+---
+
+## Configuration
+
+| Variable               |                  Default | Description                     |
+| ---------------------- | -----------------------: | ------------------------------- |
+| `GITHUB_TOKEN`         |                        — | GitHub token with issues access |
+| `OPENAI_API_KEY`       |                        — | OpenAI API key                  |
+| `ISSUESHERIFF_MODEL`   |            `gpt-4o-mini` | OpenAI model                    |
+| `OLLAMA_MODEL`         |                        — | Local Ollama model              |
+| `OLLAMA_BASE_URL`      | `http://localhost:11434` | Ollama server URL               |
+| `SIMILARITY_THRESHOLD` |                   `0.45` | Duplicate match threshold       |
+| `MAX_ISSUES`           |                    `100` | Maximum issues per scan         |
+
+---
+
+## Development
+
+```bash
+git clone https://github.com/aaxnet/issuesheriff
+cd issuesheriff
 pip install -e ".[dev,similarity]"
 pytest
 ruff check .
@@ -168,24 +241,30 @@ ruff check .
 
 ---
 
-## 🧭 Roadmap
+## Project structure
+
+```text
+issuesheriff/
+├── issuesheriff/
+│   ├── main.py
+│   ├── ai.py
+│   ├── github_client.py
+│   ├── similarity.py
+│   ├── config.py
+│   └── utils.py
+├── tests/
+├── examples/
+├── .github/workflows/
+├── .env.example
+└── pyproject.toml
+```
+
+---
+
+## Roadmap
 
 * GitHub App integration
-* Web dashboard
-* Slack / Discord notifications
-* Advanced embeddings (sentence-transformers)
-* Auto-stale issue management
-
----
-
-## 📜 License
-
-MIT License © aaxnet
-
----
-
-<div align="center">
-
-### Built for developers who value time over triage.
-
-[GitHub]([https://github.com](https://github.com)
+* semantic embeddings backend
+* stale issue detection
+* web dashboard
+* Slack / Discord
