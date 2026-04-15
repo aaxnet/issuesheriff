@@ -1,0 +1,6 @@
+{
+  "number": 42,
+  "title": "App crashes on startup with SIGSEGV when GPU memory exceeds 8GB",
+  "body": "## Description\n\nAfter the latest update (v2.4.1), the application consistently crashes on startup with a SIGSEGV error when the system GPU has more than 8GB of VRAM allocated by other processes.\n\n## Steps to Reproduce\n\n1. Open any other GPU-intensive application (e.g., a game or video editor)\n2. Ensure GPU memory usage is above 8GB\n3. Launch the app\n4. App crashes immediately with SIGSEGV\n\n## Expected Behavior\n\nThe app should either launch normally or display a meaningful error message about insufficient GPU memory.\n\n## Actual Behavior\n\n```\nProcess: myapp [1234]\nSignal: SIGSEGV (Segmentation fault)\nThread 0 crashed with X86 Thread State (64-bit):\n  rax: 0x0000000000000000\n```\n\n## Environment\n\n- OS: Ubuntu 22.04\n- GPU: NVIDIA RTX 4090 (24GB VRAM)\n- Driver: 535.113.01\n- App version: 2.4.1\n\n## Additional Context\n\nThis worked fine in v2.4.0. Reverting to 2.4.0 fixes the issue.",
+  "comments": []
+}

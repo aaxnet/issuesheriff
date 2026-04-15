@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "issuesheriff"
+version = "0.1.0"
+description = "AI-powered GitHub Issue triage — analyze, label, deduplicate, reply."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "IssueSheriff Contributors" }]
+keywords = ["github", "issues", "triage", "ai", "cli", "automation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Utilities",
+]
+requires-python = ">=3.10"
+
+dependencies = [
+    "typer>=0.12",
+    "rich>=13",
+    "httpx>=0.27",
+    "python-dotenv>=1.0",
+    "openai>=1.0",
+]
+
+[project.optional-dependencies]
+similarity = ["scikit-learn>=1.4"]
+ollama = ["httpx>=0.27"]
+dev = [
+    "pytest>=8",
+    "pytest-mock>=3.14",
+    "ruff>=0.4",
+    "mypy>=1.9",
+]
+all = ["issuesheriff[similarity,ollama,dev]"]
+
+[project.scripts]
+issuesheriff = "issuesheriff.main:app"
+
+[project.urls]
+Homepage = "https://github.com/yourusername/issuesheriff"
+Repository = "https://github.com/yourusername/issuesheriff"
+Issues = "https://github.com/yourusername/issuesheriff/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["issuesheriff*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = false
+ignore_missing_imports = true
