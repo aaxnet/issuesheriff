@@ -252,16 +252,6 @@ PRs welcome. Check [open issues](https://github.com/aaxnet/issuesheriff/issues) 
 
 ---
 
-## Roadmap
-
-- [ ] Semantic embeddings backend (OpenAI / local)
-- [ ] Stale issue detection & auto-close
-- [ ] Web dashboard
-- [ ] GitHub App (zero-config install)
-- [ ] Slack / Discord notifications
-
----
-
 <div align="center">
 
 **If IssueSheriff saved you time, a ⭐ helps others find it.**
