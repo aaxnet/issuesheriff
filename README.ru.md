@@ -1,15 +1,15 @@
 <div align="center">
 
 ```
- ██╗███████╗███████╗██╗   ██╗███████╗███████╗██╗  ██╗███████╗██████╗ ██╗███████╗███████╗
- ██║██╔════╝██╔════╝██║   ██║██╔════╝██╔════╝██║  ██║██╔════╝██╔══██╗██║██╔════╝██╔════╝
- ██║███████╗███████╗██║   ██║█████╗  ███████╗███████║█████╗  ██████╔╝██║█████╗  █████╗  
- ██║╚════██║╚════██║██║   ██║██╔══╝  ╚════██║██╔══██║██╔══╝  ██╔══██╗██║██╔══╝  ██╔══╝  
- ██║███████║███████║╚██████╔╝███████╗███████║██║  ██║███████╗██║  ██║██║██║     ██║     
- ╚═╝╚══════╝╚══════╝ ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝   
+██╗███████╗███████╗██╗   ██╗███████╗███████╗██╗  ██╗███████╗██████╗ ██╗███████╗███████╗
+██║██╔════╝██╔════╝██║   ██║██╔════╝██╔════╝██║  ██║██╔════╝██╔══██╗██║██╔════╝██╔════╝
+██║███████╗███████╗██║   ██║█████╗  ███████╗███████║█████╗  ██████╔╝██║█████╗  █████╗
+██║╚════██║╚════██║██║   ██║██╔══╝  ╚════██║██╔══██║██╔══╝  ██╔══██╗██║██╔══╝  ██╔══╝
+██║███████║███████║╚██████╔╝███████╗███████║██║  ██║███████╗██║  ██║██║██║     ██║
+╚═╝╚══════╝╚══════╝ ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝
 ```
 
-**AI-триаж GitHub issues — прямо в терминале, за секунды.**
+### AI-триаж GitHub Issues — прямо в терминале, за секунды.
 
 <br/>
 
@@ -23,7 +23,12 @@
 
 <img src="demo.gif" alt="IssueSheriff demo" width="740"/>
 
-<br/><br/>
+<br/>
+
+[![EN](https://img.shields.io/badge/lang-EN-black?style=flat-square)](README.md)
+[![PyPI](https://img.shields.io/badge/PyPI-пакет-black?style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/issuesheriff/)
+[![Bug](https://img.shields.io/badge/сообщить-баг-black?style=flat-square&logo=github&logoColor=white)](https://github.com/aaxnet/issuesheriff/issues/new)
+[![Feature](https://img.shields.io/badge/предложить-фичу-black?style=flat-square&logo=github&logoColor=white)](https://github.com/aaxnet/issuesheriff/issues/new)
 
 </div>
 
@@ -31,20 +36,13 @@
 
 ## Проблема
 
-Ты открываешь репозиторий после выходных. **47 новых issues.**  
-Дубликаты, расплывчатые баг-репорты, фичи под видом багов, вопросы, которым место в Discussions.  
-Уходит час только на чтение и разметку.
+Ты открываешь репо после выходных. **47 новых issues.**
+
+Дубликаты. Размытые баг-репорты. Feature request, замаскированный под баг. Вопросы, которым место в Discussions. Ты тратишь час только на чтение и расстановку лейблов — ещё до того, как написал хоть строчку кода.
 
 **IssueSheriff решает это.**
 
-Одна команда:
-- сканирует весь issue-трекер
-- классифицирует каждую заявку
-- находит дубликаты
-- предлагает labels
-- готовит ответы, которые можно сразу отправлять
-
-И всё это — за время, пока закипает кофе.
+Одна команда сканирует весь трекер, классифицирует каждый issue, находит дубликаты, предлагает лейблы и генерирует готовые ответы мейнтейнера — пока варится кофе.
 
 ---
 
@@ -52,68 +50,105 @@
 
 ```bash
 pip install issuesheriff
+
+# Рекомендуется — включает определение дублей
+pip install "issuesheriff[similarity]"
 ```
 
-> Работает из коробки без API-ключа. AI-функции включаются автоматически, если задан `OPENAI_API_KEY`.
+> Работает из коробки **без API-ключа.** AI-функции активируются автоматически при настройке.
 
 ---
 
-## Быстрый старт за 30 секунд
+## Быстрый старт
+
+### <img src="assets/icons/gear.svg" width="15" height="15"> Шаг 1 — Настройка (один раз)
 
 ```bash
-# 1. Укажи токены
-export GITHUB_TOKEN=ghp_...
-export OPENAI_API_KEY=sk-...      # необязательно — включает AI-ответы и более умную классификацию
-
-# 2. Просканируй любой репозиторий
-issuesheriff scan aaxnet/issuesheriff
-
-# 3. Предложи и применяй labels для конкретного issue
-issuesheriff labels aaxnet/issuesheriff 42 --apply
-
-# 4. Сгенерируй ответ от мейнтейнера и скопируй его в буфер обмена
-issuesheriff reply aaxnet/issuesheriff 42 --copy
+issuesheriff setup
 ```
 
-Вот и всё.
+Интерактивный визард спрашивает GitHub-токен и при желании AI-бэкенд. Всё сохраняется в `~/.config/issuesheriff/.env` — больше никаких `export` перед каждым запуском.
+
+```
+┌─────────────────────────────────────────────────┐
+│  IssueSheriff Setup Wizard                      │
+│  Enter = оставить текущее значение в скобках.   │
+└─────────────────────────────────────────────────┘
+
+── Обязательно ───────────────────────────────────
+  GitHub Token (repo + issues:write): ghp_***
+── AI-бэкенд (оба опциональны) ──────────────────
+  OpenAI API Key (пропустить — Enter): sk-***
+  Ollama model  (пропустить — Enter):
+── Тонкая настройка (опционально) ───────────────
+  Порог дублей (по умолчанию 0.45):
+  Макс. issues за скан (по умолчанию 100):
+
+✓ Сохранено: ~/.config/issuesheriff/.env
+```
+
+> **Где взять GitHub-токен** → [github.com/settings/tokens](https://github.com/settings/tokens) → Generate new token (classic) → отметь `repo` + `write:issues`
+
+### <img src="assets/icons/radar.svg" width="15" height="15"> Шаг 2 — Запуск
+
+```bash
+# Сканировать репозиторий
+issuesheriff scan microsoft/vscode --limit 20
+
+# Поставить лейблы на конкретный issue
+issuesheriff labels microsoft/vscode 42 --apply
+
+# Сгенерировать ответ мейнтейнера (скопировать в буфер)
+issuesheriff reply microsoft/vscode 42 --copy
+
+# Проанализировать issue из локального JSON-файла
+issuesheriff analyze issue.json
+```
 
 ---
 
 ## Что умеет
 
-| Команда | Что происходит |
-|---|---|
-| `scan <owner/repo>` | Читает все открытые issues, классифицирует их, отмечает дубликаты и выводит понятную сводку |
-| `analyze <file.json>` | Глубоко анализирует один issue: тип, labels, уровень уверенности, похожие issues, черновик ответа |
-| `labels <owner/repo> <#>` | Предлагает labels для одного issue; `--apply` записывает их в GitHub |
-| `reply <owner/repo> <#>` | Генерирует живой ответ от мейнтейнера; `--copy` кладёт его в буфер обмена |
+| | Команда | Что делает |
+|:---:|---|---|
+| <img src="assets/icons/gear.svg" width="14" height="14"> | `setup` | Интерактивная настройка — токены и AI-бэкенд один раз |
+| <img src="assets/icons/radar.svg" width="14" height="14"> | `scan <owner/repo>` | Загрузить все открытые issues, классифицировать, найти дубли, вывести сводку |
+| <img src="assets/icons/search.svg" width="14" height="14"> | `analyze <file.json>` | Глубокий анализ одного issue — тип, лейблы, уверенность, черновик ответа |
+| <img src="assets/icons/tag.svg" width="14" height="14"> | `labels <owner/repo> <#>` | Предложить лейблы для issue; `--apply` запишет их на GitHub |
+| <img src="assets/icons/chat.svg" width="14" height="14"> | `reply <owner/repo> <#>` | Сгенерировать живой ответ мейнтейнера; `--copy` положит в буфер обмена |
 
 ---
 
-## Полезный вывод
+## Как выглядит вывод
 
-Запусти `issuesheriff scan microsoft/vscode --limit 50` и получишь:
+```
+┌──────────────────────────────────────────────────────────────┐
+│  microsoft/vscode  —  20 issues загружено                    │
+└──────────────────────────────────────────────────────────────┘
 
-```text
-┌─────────────────────────────────────────────────────────────────┐
-│  Просканировано 50 issues · microsoft/vscode · 3.2s            │
-├──────┬──────────────────────────────────────┬────────┬──────────┤
-│  #   │  Заголовок                           │ Тип    │ Labels   │
-├──────┼──────────────────────────────────────┼────────┼──────────┤
-│  209 │ Extension host crashes on startup   │ bug    │ bug,crash│
-│  208 │ Add vim keybindings to terminal     │ feat   │ feature  │
-│  207 │ How do I change the default shell?   │ docs   │ question │
-│  206 │ [DUP] Terminal not opening  ──→ #201│ dup    │ duplicate│
-└──────┴──────────────────────────────────────┴────────┴──────────┘
+  #209  Extension host crashes on startup  [BUG]
+  Краткое: процесс extension host падает сразу при запуске.
+  Лейблы  bug  crash
 
-  Bugs: 21   Features: 14   Questions: 9   Duplicates: 6
+  #208  Add vim keybindings to terminal  [FEATURE]
+  Краткое: пользователь просит Vim-режим в терминале.
+  Лейблы  feature  terminal
+
+  #207  How do I change the default shell?  [DOCS]
+  Краткое: пользователь не знает как настроить шелл по умолчанию.
+  Лейблы  question  docs
+
+── Определение дублей ─────────────────────────────────────────
+
+  #206  Terminal not opening  ──→  #201   ████░░ 81%
+  #203  Shell crashes on open  ──→  #201  ███░░░ 57%
 ```
 
-А `issuesheriff analyze issue.json` возвращает структурированный JSON, который можно передавать куда угодно:
+`issuesheriff analyze issue.json --json` возвращает структурированный JSON:
 
 ```json
 {
-  "summary": "Приложение аварийно закрывается сразу после запуска после последнего обновления.",
+  "summary": "Приложение крашится сразу после последнего обновления.",
   "type": "bug",
   "labels": ["bug", "crash", "regression"],
   "confidence": 0.94,
@@ -121,15 +156,42 @@ issuesheriff reply aaxnet/issuesheriff 42 --copy
     { "id": 209831, "score": 0.81 },
     { "id": 208104, "score": 0.57 }
   ],
-  "reply": "Спасибо за репорт — похоже, это регрессия, связанная с недавним крашем. Мы проверим это и сообщим обновления здесь."
+  "reply": "Спасибо за репорт — похоже на регрессию из последнего обновления. Разберёмся и отпишемся здесь."
 }
 ```
 
 ---
 
-## Автоматизация через GitHub Actions
+## AI-бэкенды
 
-Добавь это в `.github/workflows/triage.yml`, и каждый новый issue будет обрабатываться автоматически:
+### <img src="assets/icons/cloud.svg" width="14" height="14"> OpenAI — лучшая точность
+
+```bash
+issuesheriff setup   # введи sk-... ключ при запросе
+```
+
+По умолчанию `gpt-4o-mini` — быстро и дёшево (~$0.001 за issue). Замени на `gpt-4o` для максимальной точности.
+
+### <img src="assets/icons/monitor.svg" width="14" height="14"> Ollama — полностью офлайн
+
+Данные не покидают твою машину:
+
+```bash
+ollama pull mistral
+issuesheriff setup   # введи "mistral" в поле Ollama model
+```
+
+### <img src="assets/icons/bolt.svg" width="14" height="14"> Без AI — нулевая конфигурация
+
+Эвристика + TF-IDF для дублей, без API:
+
+```bash
+issuesheriff scan aaxnet/issuesheriff --no-reply
+```
+
+---
+
+## <img src="assets/icons/workflow.svg" width="15" height="15"> Автоматизация через GitHub Actions
 
 ```yaml
 name: Auto Triage
@@ -147,127 +209,67 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install IssueSheriff
-        run: pip install issuesheriff
-
-      - name: Analyze & label
-        run: |
+      - run: pip install "issuesheriff[similarity]"
+      - run: |
           echo '{"title":"${{ github.event.issue.title }}","body":"${{ github.event.issue.body }}"}' > issue.json
           issuesheriff analyze issue.json --json > result.json
-          cat result.json
         env:
-          GITHUB_TOKEN:    ${{ secrets.GITHUB_TOKEN }}
-          OPENAI_API_KEY:  ${{ secrets.OPENAI_API_KEY }}
-```
-
----
-
-## AI-бэкенды
-
-IssueSheriff работает с тремя бэкендами — выбирай тот, который подходит под твой стек.
-
-### OpenAI (по умолчанию)
-Лучшая точность, самая простая настройка:
-
-```env
-OPENAI_API_KEY=sk-...
-ISSUESHERIFF_MODEL=gpt-4o-mini   # недорого и быстро; при необходимости замени на gpt-4o
-```
-
-### Ollama — полностью офлайн
-Никакие данные не покидают твою машину:
-
-```bash
-ollama run mistral
-```
-
-```env
-OLLAMA_MODEL=mistral
-OLLAMA_BASE_URL=http://localhost:11434
-```
-
-### Без AI
-Если ключ не указан, IssueSheriff всё равно работает — эвристическая классификация и поиск дубликатов через TF-IDF доступны без API:
-
-```bash
-issuesheriff scan aaxnet/issuesheriff --no-reply
+          GITHUB_TOKEN:   ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 ```
 
 ---
 
 ## Конфигурация
 
-| Переменная | Значение по умолчанию | Описание |
+| Переменная | По умолчанию | Описание |
 |---|---|---|
-| `GITHUB_TOKEN` | — | GitHub token с правом `issues: write` |
-| `OPENAI_API_KEY` | — | OpenAI key (необязательно) |
+| `GITHUB_TOKEN` | — | GitHub-токен (`repo` + `issues:write`) |
+| `OPENAI_API_KEY` | — | OpenAI-ключ — включает AI-классификацию и ответы |
 | `ISSUESHERIFF_MODEL` | `gpt-4o-mini` | Модель OpenAI |
-| `OLLAMA_MODEL` | — | Имя локальной модели Ollama |
-| `OLLAMA_BASE_URL` | `http://localhost:11434` | Сервер Ollama |
-| `SIMILARITY_THRESHOLD` | `0.45` | Порог cosine similarity для дубликатов |
-| `MAX_ISSUES` | `100` | Максимум issues, которые забираются за один scan |
+| `OLLAMA_MODEL` | — | Локальная Ollama-модель (например `mistral`) |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Адрес Ollama-сервера |
+| `SIMILARITY_THRESHOLD` | `0.45` | Порог косинусного сходства для дублей |
+| `MAX_ISSUES` | `100` | Макс. issues за один `scan` |
+
+Всё задаётся через `issuesheriff setup` или вручную в `~/.config/issuesheriff/.env`.
 
 ---
 
 ## Варианты установки
 
 ```bash
-# Только основа
-pip install issuesheriff
-
-# + поиск дубликатов (TF-IDF cosine similarity)
-pip install "issuesheriff[similarity]"
-
-# + поддержка Ollama
-pip install "issuesheriff[similarity,ollama]"
-
-# Полная dev-сборка
-pip install "issuesheriff[similarity,ollama,dev]"
+pip install issuesheriff                          # только ядро
+pip install "issuesheriff[similarity]"            # + определение дублей  ← рекомендуется
+pip install "issuesheriff[similarity,ollama]"     # + поддержка Ollama
+pip install "issuesheriff[similarity,ollama,dev]" # полная установка для разработки
 ```
 
 ---
 
-## Структура проекта
-
-```text
-issuesheriff/
-├── issuesheriff/
-│   ├── main.py          # CLI entry point
-│   ├── ai.py            # AI backends (OpenAI / Ollama / heuristic)
-│   ├── github_client.py # GitHub API wrapper
-│   ├── similarity.py    # TF-IDF duplicate detection
-│   ├── config.py        # Env + settings
-│   └── utils.py
-├── tests/
-├── examples/
-│   └── sample_issue.json
-├── .github/
-│   └── workflows/
-├── .env.example
-└── pyproject.toml
-```
-
----
-
-## Локальная разработка
+## Разработка
 
 ```bash
 git clone https://github.com/aaxnet/issuesheriff
 cd issuesheriff
 pip install -e ".[dev,similarity]"
-pytest
-ruff check .
+pytest && ruff check .
 ```
 
-PR приветствуются. Загляни в [open issues](https://github.com/aaxnet/issuesheriff/issues) — там часто есть хорошие задачи для старта.
+PR-ы приветствуются. Смотри [открытые issues](https://github.com/aaxnet/issuesheriff/issues).
 
 ---
 
 <div align="center">
+<br/>
 
-**Если IssueSheriff сэкономил тебе время, ⭐ поможет другим найти проект.**
+Если IssueSheriff сэкономил тебе время — <img src="assets/icons/star.svg" width="13" height="13"> помогает другим мейнтейнерам его найти.
 
-[PyPI](https://pypi.org/project/issuesheriff/) · [Сообщить о баге](https://github.com/aaxnet/issuesheriff/issues/new) · [Предложить фичу](https://github.com/aaxnet/issuesheriff/issues/new)
+<br/>
 
+[![Поставить звезду](https://img.shields.io/badge/Поставить_звезду-black?style=flat-square&logo=github&logoColor=white)](https://github.com/aaxnet/issuesheriff)
+[![PyPI](https://img.shields.io/badge/PyPI-black?style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/issuesheriff/)
+[![Сообщить о баге](https://img.shields.io/badge/Сообщить_о_баге-black?style=flat-square&logo=github&logoColor=white)](https://github.com/aaxnet/issuesheriff/issues/new)
+
+<br/>
 </div>
