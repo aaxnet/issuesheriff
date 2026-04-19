@@ -1,4 +1,4 @@
-[RU](README.ru.md) | [UA](README.md)
+[RU](README.ru.md) | [USA](README.md)
 <div align="center">
 
 ```
