@@ -18,7 +18,7 @@ from issuesheriff import __version__
 from issuesheriff.ai import analyze_issue, generate_reply, suggest_labels
 from issuesheriff.github_client import GitHubClient
 from issuesheriff.similarity import find_duplicates
-from issuesheriff.config import get_config
+from issuesheriff.config import get_config, save_user_config, load_existing_user_config, USER_CONFIG_FILE
 from issuesheriff.utils import format_score_bar, truncate
 
 app = typer.Typer(
@@ -93,11 +93,9 @@ def scan(
     Example:
       issuesheriff scan microsoft/vscode --limit 10
     """
-    config = get_config()
-    if not config.github_token:
-        console.print("[red]✗[/] GITHUB_TOKEN not set. Add it to .env or environment.")
+    if not _check_token_or_hint():
         raise typer.Exit(1)
-
+    config = get_config()
     client = GitHubClient(config.github_token)
 
     with Progress(
@@ -152,6 +150,8 @@ def reply(
     Example:
       issuesheriff reply microsoft/vscode 12345
     """
+    if not _check_token_or_hint():
+        raise typer.Exit(1)
     config = get_config()
     client = GitHubClient(config.github_token)
 
@@ -195,6 +195,8 @@ def labels(
     Example:
       issuesheriff labels microsoft/vscode 12345 --apply
     """
+    if not _check_token_or_hint():
+        raise typer.Exit(1)
     config = get_config()
     client = GitHubClient(config.github_token)
 
@@ -220,6 +222,106 @@ def labels(
         label_names = list(suggested.keys())
         client.apply_labels(repo, issue_id, label_names)
         console.print(f"[green]✓[/] Applied: {', '.join(label_names)}")
+
+
+
+# ─────────────────────────────────────────────
+#  issuesheriff setup
+# ─────────────────────────────────────────────
+@app.command()
+def setup():
+    """
+    ⚙️  Interactive first-run (or re-run) configuration wizard.
+
+    \b
+    Saves tokens and settings to ~/.config/issuesheriff/.env
+    so you never have to export env vars manually.
+    """
+    existing = load_existing_user_config()
+    is_update = bool(existing)
+
+    console.print()
+    console.print(Panel(
+        "[bold cyan]IssueSheriff Setup Wizard[/]\n"
+        "[dim]Answers saved to [/][cyan]~/.config/issuesheriff/.env[/]\n"
+        "[dim]Press Enter to keep the current value shown in brackets.[/]",
+        border_style="cyan",
+        padding=(1, 2),
+    ))
+    console.print()
+
+    def _ask(label, key, secret=False, hint=""):
+        current = existing.get(key, "")
+        display = ("*" * min(len(current), 8) + current[-4:]) if secret and current else current
+        parts = f"  [bold]{label}[/]"
+        if hint:
+            parts += f" [dim]({hint})[/]"
+        if display:
+            parts += f" [dim][{display}][/]"
+        parts += ": "
+        console.print(parts, end="")
+        value = input()
+        return value.strip() or current
+
+    console.rule("[dim]Required[/]")
+    github_token = _ask("GitHub Token", "GITHUB_TOKEN", secret=True,
+                        hint="github.com/settings/tokens — repo + issues:write")
+
+    console.print()
+    console.rule("[dim]AI Backend  (both optional)[/]")
+    console.print("  [dim]OpenAI = cloud accuracy   Ollama = local privacy[/]\n")
+
+    openai_key = _ask("OpenAI API Key", "OPENAI_API_KEY", secret=True,
+                      hint="platform.openai.com/api-keys — blank to skip")
+    openai_model = ""
+    if openai_key:
+        openai_model = _ask("OpenAI model", "ISSUESHERIFF_MODEL", hint="default: gpt-4o-mini")
+
+    ollama_model = _ask("Ollama model", "OLLAMA_MODEL", hint="e.g. mistral — blank to skip")
+    ollama_url = ""
+    if ollama_model:
+        ollama_url = _ask("Ollama base URL", "OLLAMA_BASE_URL", hint="default: http://localhost:11434")
+
+    console.print()
+    console.rule("[dim]Tuning (optional)[/]")
+    similarity = _ask("Duplicate threshold", "SIMILARITY_THRESHOLD", hint="0.0–1.0, default 0.45")
+    max_issues = _ask("Max issues per scan", "MAX_ISSUES", hint="default 100")
+
+    values = {k: v for k, v in {
+        "GITHUB_TOKEN": github_token,
+        "OPENAI_API_KEY": openai_key,
+        "ISSUESHERIFF_MODEL": openai_model,
+        "OLLAMA_MODEL": ollama_model,
+        "OLLAMA_BASE_URL": ollama_url,
+        "SIMILARITY_THRESHOLD": similarity,
+        "MAX_ISSUES": max_issues,
+    }.items() if v}
+
+    saved_path = save_user_config(values)
+
+    console.print()
+    verb = "Updated" if is_update else "Saved"
+    console.print(Panel(
+        f"[green]✓[/] {verb}: [cyan]{saved_path}[/]\n\n"
+        "[dim]Run [/][bold]issuesheriff scan <owner/repo>[/][dim] to get started.[/]",
+        border_style="green",
+        padding=(1, 2),
+    ))
+    console.print()
+
+
+def _check_token_or_hint() -> bool:
+    """Returns True if token is set, else prints setup hint and returns False."""
+    config = get_config()
+    if config.github_token:
+        return True
+    console.print(
+        "\n[red]✗[/] [bold]GITHUB_TOKEN[/] is not set.\n\n"
+        "  Run [bold cyan]issuesheriff setup[/] to configure it interactively,\n"
+        "  or export it manually:\n"
+        "    [dim]export GITHUB_TOKEN=ghp_...[/]\n"
+    )
+    return False
 
 
 # ─────────────────────────────────────────────
