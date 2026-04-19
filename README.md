@@ -1,16 +1,15 @@
-[RU](README.ru.md) | [USA](README.md)
 <div align="center">
 
 ```
- ██╗███████╗███████╗██╗   ██╗███████╗███████╗██╗  ██╗███████╗██████╗ ██╗███████╗███████╗
- ██║██╔════╝██╔════╝██║   ██║██╔════╝██╔════╝██║  ██║██╔════╝██╔══██╗██║██╔════╝██╔════╝
- ██║███████╗███████╗██║   ██║█████╗  ███████╗███████║█████╗  ██████╔╝██║█████╗  █████╗  
- ██║╚════██║╚════██║██║   ██║██╔══╝  ╚════██║██╔══██║██╔══╝  ██╔══██╗██║██╔══╝  ██╔══╝  
- ██║███████║███████║╚██████╔╝███████╗███████║██║  ██║███████╗██║  ██║██║██║     ██║     
- ╚═╝╚══════╝╚══════╝ ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝   
+██╗███████╗███████╗██╗   ██╗███████╗███████╗██╗  ██╗███████╗██████╗ ██╗███████╗███████╗
+██║██╔════╝██╔════╝██║   ██║██╔════╝██╔════╝██║  ██║██╔════╝██╔══██╗██║██╔════╝██╔════╝
+██║███████╗███████╗██║   ██║█████╗  ███████╗███████║█████╗  ██████╔╝██║█████╗  █████╗
+██║╚════██║╚════██║██║   ██║██╔══╝  ╚════██║██╔══██║██╔══╝  ██╔══██╗██║██╔══╝  ██╔══╝
+██║███████║███████║╚██████╔╝███████╗███████║██║  ██║███████╗██║  ██║██║██║     ██║
+╚═╝╚══════╝╚══════╝ ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝
 ```
 
-**AI-powered GitHub issue triage — in your terminal, in seconds.**
+### AI-powered GitHub issue triage — in your terminal, in seconds.
 
 <br/>
 
@@ -22,10 +21,14 @@
 
 <br/>
 
-<!-- Replace with your GIF -->
 <img src="demo.gif" alt="IssueSheriff demo" width="740"/>
 
-<br/><br/>
+<br/>
+
+[![RU](https://img.shields.io/badge/lang-RU-black?style=flat-square)](README.ru.md)
+[![PyPI](https://img.shields.io/badge/PyPI-package-black?style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/issuesheriff/)
+[![Bug](https://img.shields.io/badge/report-bug-black?style=flat-square&logo=github&logoColor=white)](https://github.com/aaxnet/issuesheriff/issues/new)
+[![Feature](https://img.shields.io/badge/request-feature-black?style=flat-square&logo=github&logoColor=white)](https://github.com/aaxnet/issuesheriff/issues/new)
 
 </div>
 
@@ -33,11 +36,13 @@
 
 ## The problem
 
-You open your repo after a weekend. **47 new issues.** Duplicates, vague bug reports, feature requests disguised as bugs, questions that belong in Discussions. You spend an hour just reading and labeling.
+You open your repo after a weekend. **47 new issues.**
+
+Duplicates. Vague bug reports. Feature requests disguised as bugs. Questions that belong in Discussions. You spend an hour just reading and labeling — before writing a single line of code.
 
 **IssueSheriff fixes that.**
 
-One command scans your entire issue tracker, classifies every issue, spots duplicates, suggests labels, and drafts ready-to-send replies — in the time it takes to make coffee.
+One command scans your entire issue tracker, classifies every issue, spots duplicates, suggests labels, and drafts ready-to-send maintainer replies — in the time it takes to make coffee.
 
 ---
 
@@ -45,68 +50,105 @@ One command scans your entire issue tracker, classifies every issue, spots dupli
 
 ```bash
 pip install issuesheriff
+
+# Recommended — includes duplicate detection
+pip install "issuesheriff[similarity]"
 ```
 
-> Works out of the box without an API key. AI features activate automatically when `OPENAI_API_KEY` is set.
+> Works out of the box **without any API key.** AI features activate automatically when you configure them.
 
 ---
 
-## 30-second quickstart
+## Quickstart
+
+### <img src="assets/icons/gear.svg" width="15" height="15"> Step 1 — Configure (once)
 
 ```bash
-# 1. Set your tokens
-export GITHUB_TOKEN=ghp_...
-export OPENAI_API_KEY=sk-...      # optional — enables AI replies & smarter classification
-
-# 2. Scan any repo
-issuesheriff scan aaxnet/issuesheriff
-
-# 3. Suggest + apply labels on a specific issue
-issuesheriff labels aaxnet/issuesheriff 42 --apply
-
-# 4. Draft a maintainer reply and copy it to clipboard
-issuesheriff reply aaxnet/issuesheriff 42 --copy
+issuesheriff setup
 ```
 
-That's it.
+An interactive wizard asks for your GitHub token and optionally an AI backend. Everything is saved to `~/.config/issuesheriff/.env` — no need to export env vars every time.
+
+```
+┌─────────────────────────────────────────────────┐
+│  IssueSheriff Setup Wizard                      │
+│  Press Enter to keep current value in brackets. │
+└─────────────────────────────────────────────────┘
+
+── Required ──────────────────────────────────────
+  GitHub Token (repo + issues:write): ghp_***
+── AI Backend (both optional) ───────────────────
+  OpenAI API Key (blank to skip): sk-***
+  Ollama model  (blank to skip):
+── Tuning (optional) ─────────────────────────────
+  Duplicate threshold (default 0.45):
+  Max issues per scan (default 100):
+
+✓ Saved: ~/.config/issuesheriff/.env
+```
+
+> **Where to get a GitHub token** → [github.com/settings/tokens](https://github.com/settings/tokens) → Generate new token (classic) → check `repo` + `write:issues`
+
+### <img src="assets/icons/radar.svg" width="15" height="15"> Step 2 — Run
+
+```bash
+# Scan a repository
+issuesheriff scan microsoft/vscode --limit 20
+
+# Apply labels to a specific issue
+issuesheriff labels microsoft/vscode 42 --apply
+
+# Generate a maintainer reply (copy to clipboard)
+issuesheriff reply microsoft/vscode 42 --copy
+
+# Analyze an issue from a local JSON file
+issuesheriff analyze issue.json
+```
 
 ---
 
 ## What it does
 
-| Command | What happens |
-|---|---|
-| `scan <owner/repo>` | Reads all open issues, classifies them, flags duplicates, prints a clean summary |
-| `analyze <file.json>` | Deep-analyzes a single issue — type, labels, confidence score, similar issues, reply draft |
-| `labels <owner/repo> <#>` | Suggests labels for one issue; `--apply` writes them to GitHub |
-| `reply <owner/repo> <#>` | Generates a human-sounding maintainer reply; `--copy` puts it in your clipboard |
+| | Command | Description |
+|:---:|---|---|
+| <img src="assets/icons/gear.svg" width="14" height="14"> | `setup` | Interactive wizard — configure tokens and AI backend once |
+| <img src="assets/icons/radar.svg" width="14" height="14"> | `scan <owner/repo>` | Fetch all open issues, classify them, detect duplicates, print summary |
+| <img src="assets/icons/search.svg" width="14" height="14"> | `analyze <file.json>` | Deep analysis of a single issue — type, labels, confidence, reply draft |
+| <img src="assets/icons/tag.svg" width="14" height="14"> | `labels <owner/repo> <#>` | Suggest labels for one issue; `--apply` writes them to GitHub |
+| <img src="assets/icons/chat.svg" width="14" height="14"> | `reply <owner/repo> <#>` | Generate a human-sounding maintainer reply; `--copy` puts it in clipboard |
 
 ---
 
-## Output that's actually useful
-
-Run `issuesheriff scan microsoft/vscode --limit 50` and you get:
+## Output
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│  Scanned 50 issues  ·  microsoft/vscode  ·  3.2s               │
-├──────┬──────────────────────────────────────┬────────┬──────────┤
-│  #   │  Title                               │  Type  │  Labels  │
-├──────┼──────────────────────────────────────┼────────┼──────────┤
-│  209 │  Extension host crashes on startup   │  bug   │ bug,crash│
-│  208 │  Add vim keybindings to terminal     │  feat  │ feature  │
-│  207 │  How do I change the default shell?  │  docs  │ question │
-│  206 │  [DUP] Terminal not opening  ──→ #201│  dup   │ duplicate│
-└──────┴──────────────────────────────────────┴────────┴──────────┘
+┌──────────────────────────────────────────────────────────────┐
+│  microsoft/vscode  —  20 issues loaded                       │
+└──────────────────────────────────────────────────────────────┘
 
-  Bugs: 21   Features: 14   Questions: 9   Duplicates: 6
+  #209  Extension host crashes on startup  [BUG]
+  Summary: Extension host process dies on launch, blocking all extensions.
+  Labels  bug  crash
+
+  #208  Add vim keybindings to terminal  [FEATURE]
+  Summary: User requests native Vim mode keybindings in the integrated terminal.
+  Labels  feature  terminal
+
+  #207  How do I change the default shell?  [DOCS]
+  Summary: User unsure how to configure the default shell in VS Code settings.
+  Labels  question  docs
+
+── Duplicate Detection ────────────────────────────────────────
+
+  #206  Terminal not opening  ──→  #201   ████░░ 81%
+  #203  Shell crashes on open  ──→  #201  ███░░░ 57%
 ```
 
-And `issuesheriff analyze issue.json` returns structured JSON you can pipe anywhere:
+`issuesheriff analyze issue.json --json` returns structured JSON you can pipe anywhere:
 
 ```json
 {
-  "summary": "Application crashes immediately on launch after the latest update.",
+  "summary": "Application crashes on launch after the latest update.",
   "type": "bug",
   "labels": ["bug", "crash", "regression"],
   "confidence": 0.94,
@@ -114,15 +156,42 @@ And `issuesheriff analyze issue.json` returns structured JSON you can pipe anywh
     { "id": 209831, "score": 0.81 },
     { "id": 208104, "score": 0.57 }
   ],
-  "reply": "Thanks for the report — this looks like a crash regression introduced recently. We'll investigate and keep you posted here."
+  "reply": "Thanks for the report — this looks like a regression. We'll investigate and keep you posted."
 }
 ```
 
 ---
 
-## Automate it with GitHub Actions
+## AI backends
 
-Drop this in `.github/workflows/triage.yml` and every new issue gets triaged automatically:
+### <img src="assets/icons/cloud.svg" width="14" height="14"> OpenAI — best accuracy
+
+```bash
+issuesheriff setup   # enter your sk-... key when prompted
+```
+
+`gpt-4o-mini` by default — fast and cheap (~$0.001 per issue). Swap for `gpt-4o` for higher accuracy.
+
+### <img src="assets/icons/monitor.svg" width="14" height="14"> Ollama — fully offline
+
+No data leaves your machine:
+
+```bash
+ollama pull mistral
+issuesheriff setup   # enter "mistral" when asked for Ollama model
+```
+
+### <img src="assets/icons/bolt.svg" width="14" height="14"> No AI — zero config
+
+Heuristic classification + TF-IDF duplicate detection, no API needed:
+
+```bash
+issuesheriff scan aaxnet/issuesheriff --no-reply
+```
+
+---
+
+## <img src="assets/icons/workflow.svg" width="15" height="15"> Automate with GitHub Actions
 
 ```yaml
 name: Auto Triage
@@ -140,47 +209,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install IssueSheriff
-        run: pip install issuesheriff
-
-      - name: Analyze & label
-        run: |
+      - run: pip install "issuesheriff[similarity]"
+      - run: |
           echo '{"title":"${{ github.event.issue.title }}","body":"${{ github.event.issue.body }}"}' > issue.json
           issuesheriff analyze issue.json --json > result.json
-          cat result.json
         env:
-          GITHUB_TOKEN:    ${{ secrets.GITHUB_TOKEN }}
-          OPENAI_API_KEY:  ${{ secrets.OPENAI_API_KEY }}
-```
-
----
-
-## AI backends
-
-IssueSheriff works with three backends — pick what fits your stack.
-
-### OpenAI (default)
-Best accuracy, easiest setup:
-```env
-OPENAI_API_KEY=sk-...
-ISSUESHERIFF_MODEL=gpt-4o-mini   # cheap and fast; swap for gpt-4o if you need it
-```
-
-### Ollama — fully offline
-No data leaves your machine:
-```bash
-ollama run mistral
-```
-```env
-OLLAMA_MODEL=mistral
-OLLAMA_BASE_URL=http://localhost:11434
-```
-
-### No AI
-If no key is configured, IssueSheriff still runs — heuristic classification + TF-IDF duplicate detection work without any API:
-```bash
-issuesheriff scan aaxnet/issuesheriff --no-reply
+          GITHUB_TOKEN:   ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 ```
 
 ---
@@ -189,74 +224,52 @@ issuesheriff scan aaxnet/issuesheriff --no-reply
 
 | Variable | Default | Description |
 |---|---|---|
-| `GITHUB_TOKEN` | — | GitHub token with `issues: write` |
-| `OPENAI_API_KEY` | — | OpenAI key (optional) |
+| `GITHUB_TOKEN` | — | GitHub token (`repo` + `issues:write`) |
+| `OPENAI_API_KEY` | — | OpenAI key — enables AI classification and replies |
 | `ISSUESHERIFF_MODEL` | `gpt-4o-mini` | OpenAI model |
-| `OLLAMA_MODEL` | — | Local Ollama model name |
-| `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama server |
-| `SIMILARITY_THRESHOLD` | `0.45` | Cosine similarity threshold for duplicates |
-| `MAX_ISSUES` | `100` | Max issues fetched per scan |
+| `OLLAMA_MODEL` | — | Local Ollama model (e.g. `mistral`) |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama server address |
+| `SIMILARITY_THRESHOLD` | `0.45` | Cosine similarity cutoff for duplicate detection |
+| `MAX_ISSUES` | `100` | Max issues fetched per `scan` |
+
+All variables can be set via `issuesheriff setup` or manually in `~/.config/issuesheriff/.env`.
 
 ---
 
 ## Install options
 
 ```bash
-# Core only
-pip install issuesheriff
-
-# + duplicate detection (TF-IDF cosine similarity)
-pip install "issuesheriff[similarity]"
-
-# + Ollama support
-pip install "issuesheriff[similarity,ollama]"
-
-# Full dev setup
-pip install "issuesheriff[similarity,ollama,dev]"
+pip install issuesheriff                          # core only
+pip install "issuesheriff[similarity]"            # + duplicate detection  ← recommended
+pip install "issuesheriff[similarity,ollama]"     # + Ollama support
+pip install "issuesheriff[similarity,ollama,dev]" # full dev setup
 ```
 
 ---
 
-## Project structure
-
-```
-issuesheriff/
-├── issuesheriff/
-│   ├── main.py          # CLI entry point
-│   ├── ai.py            # AI backends (OpenAI / Ollama / heuristic)
-│   ├── github_client.py # GitHub API wrapper
-│   ├── similarity.py    # TF-IDF duplicate detection
-│   ├── config.py        # Env + settings
-│   └── utils.py
-├── tests/
-├── examples/
-│   └── sample_issue.json
-├── .github/
-│   └── workflows/
-├── .env.example
-└── pyproject.toml
-```
-
----
-
-## Developing locally
+## Contributing
 
 ```bash
 git clone https://github.com/aaxnet/issuesheriff
 cd issuesheriff
 pip install -e ".[dev,similarity]"
-pytest
-ruff check .
+pytest && ruff check .
 ```
 
-PRs welcome. Check [open issues](https://github.com/aaxnet/issuesheriff/issues) for good first tasks.
+PRs welcome. See [open issues](https://github.com/aaxnet/issuesheriff/issues).
 
 ---
 
 <div align="center">
+<br/>
 
-**If IssueSheriff saved you time, a ⭐ helps others find it.**
+If IssueSheriff saved you time — a <img src="assets/icons/star.svg" width="13" height="13"> helps other maintainers find it.
 
-[PyPI](https://pypi.org/project/issuesheriff/) · [Report a bug](https://github.com/aaxnet/issuesheriff/issues/new) · [Request a feature](https://github.com/aaxnet/issuesheriff/issues/new)
+<br/>
 
+[![Star on GitHub](https://img.shields.io/badge/Star_on_GitHub-black?style=flat-square&logo=github&logoColor=white)](https://github.com/aaxnet/issuesheriff)
+[![PyPI](https://img.shields.io/badge/PyPI-black?style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/issuesheriff/)
+[![Report a bug](https://img.shields.io/badge/Report_a_bug-black?style=flat-square&logo=github&logoColor=white)](https://github.com/aaxnet/issuesheriff/issues/new)
+
+<br/>
 </div>
